@@ -95,9 +95,18 @@ insert into Department (id, name) values ('2', 'Sales')
 
 
 -----------------solution/* Write your T-SQL query statement below */
-WITH GroupedEmps AS
-SELECT * FROM employee 
-SELECT TOP 3 d.name AS Department, e.name AS Employee, e.salary AS Salary
-FROM department d 
-JOIN employee e on d.id = e.departmentId
-ORDER BY e.salary DESC
+/* Write your T-SQL query statement below */
+WITH GroupedEmps AS (
+    SELECT 
+    e.id,
+    e.name as employeeName, 
+    e.salary,
+    e.departmentId as employeeDepartmentId,
+    d.id as departmentId, 
+    d.name as DepartmentName,
+    DENSE_RANK() OVER (PARTITION BY e.departmentId ORDER BY e.SALARY DESC) AS salary_rank
+FROM employee e
+JOIN department d on e.departmentId = d.id )
+SELECT DepartmentName AS Department, employeeName AS Employee, salary AS Salary
+FROM GroupedEmps WHERE salary_rank <= 3
+ORDER BY departmentName, salary_rank, salary DESC;
