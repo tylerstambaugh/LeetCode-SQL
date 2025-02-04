@@ -54,14 +54,17 @@ insert into Weather (id, recordDate, temperature) values ('4', '2015-01-04', '30
 /* Write your T-SQL query statement below */
 
 
+
 WITH cte AS (
 SELECT
     id,
     recordDate,
     temperature,
-    LEAD(temperature) OVER (PARTITION BY id ORDER BY recordDate DESC) AS prevTemp
+    LAG(temperature) OVER (ORDER BY recordDate ASC) AS prevTemp
 FROM weather)
-SELECT id 
+SELECT id as Id
 FROM cte 
 WHERE temperature > prevTemp
+
+
 
